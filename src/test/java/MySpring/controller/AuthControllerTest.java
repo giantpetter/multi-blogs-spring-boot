@@ -97,7 +97,7 @@ class AuthControllerTest {
                 .andExpect(result -> {
                     System.out.println(result.getResponse().getContentAsString());
                     Assertions.assertTrue(result.getResponse()
-                            .getContentAsString().contains("用户没有登录"));
+                            .getContentAsString().contains("MyUser"));
                 });
     }
 
