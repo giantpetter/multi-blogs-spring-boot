@@ -72,14 +72,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <groupId>junit</groupId>-->
-<!--                    <artifactId>junit</artifactId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
-        </dependency>
+            <!--            <exclusions>-->
+            <!--                <exclusion>-->
+            <!--                    <groupId>junit</groupId>-->
+            <!--                    <artifactId>junit</artifactId>-->
+            <!--                </exclusion>-->
+            <!--            </exclusions>-->
+        </dependency><!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -108,6 +113,72 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>start-test-database</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>--name</argument>
+                                <argument>testDb</argument>
+                                <argument>-p</argument>
+                                <argument>3307:3306</argument>
+                                <argument>-d</argument>
+                                <argument>-e</argument>
+                                <argument>MYSQL_ROOT_PASSWORD=123</argument>
+                                <argument>-e</argument>
+                                <argument>MYSQL_DATABASE=xdml</argument>
+                                <argument>mysql</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wait-test-database</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <executable>sleep</executable>
+                            <arguments>
+                                <argument>20</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>close-test-database</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                        <configuration>
+                            <executable>docker</executable>
+                            <arguments>
+                                <argument>rm</argument>
+                                <argument>-f</argument>
+                                <argument>testDb</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>7.14.0</version>
@@ -116,6 +187,20 @@
                     <user>root</user>
                     <password>123</password>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>setup-testDbTable</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                        <configuration>
+                            <url>jdbc:mysql://localhost:3307/xdml</url>
+                            <user>root</user>
+                            <password>123</password>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

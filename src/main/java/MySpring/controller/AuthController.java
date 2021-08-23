@@ -82,7 +82,7 @@ public class AuthController {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
         try {
             Authentication authenticate = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authenticate);
+            SecurityContextHolder.getContext().setAuthentication(token);
             User loggedInUser = userService.getUserByUsername(username);
             return Result.success("登录成功", loggedInUser);
         } catch (BadCredentialsException e) {

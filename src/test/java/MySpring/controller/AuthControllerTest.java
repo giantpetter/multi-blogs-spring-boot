@@ -38,14 +38,12 @@ class AuthControllerTest {
     private AuthenticationManager authenticationManager;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     private MockMvc mvc;
-//    private MockHttpSession session;
 
     @BeforeEach
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(new AuthController(userService, authenticationManager))
                 .build();
-//        session = new MockHttpSession();
     }
 
     @Test
