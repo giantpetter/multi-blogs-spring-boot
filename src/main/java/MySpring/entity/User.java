@@ -13,6 +13,7 @@ public class User {
     Instant createdAt;
     Instant updatedAt;
 
+
     public User(Integer id, String username, String encodedPassword, String avatar) {
         this.id = id;
         this.username = username;

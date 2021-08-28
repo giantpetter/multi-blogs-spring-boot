@@ -27,7 +27,7 @@ public class MyIntegrationTest {
     private Environment environment;
 
     @Test
-    public void test() throws IOException {
+    public void isLoginByDefault() throws IOException {
         String port = environment.getProperty("local.server.port");
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet("http://127.0.0.1:" + port + "/auth");

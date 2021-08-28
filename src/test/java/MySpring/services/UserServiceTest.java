@@ -1,7 +1,7 @@
 package MySpring.services;
 
 import MySpring.entity.User;
-import MySpring.mapper.UserMapper;
+import MySpring.dao.UserMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

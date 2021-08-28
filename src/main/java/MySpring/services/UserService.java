@@ -1,6 +1,6 @@
 package MySpring.services;
 
-import MySpring.mapper.UserMapper;
+import MySpring.dao.UserMapper;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

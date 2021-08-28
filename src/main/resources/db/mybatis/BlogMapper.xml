@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mySpringBoot.BlogMapper">
+    <select id="selectBlog" resultMap="detailedBlogResultMap">
+        select b.id as blog_id,
+        b.title as blog_title,
+        b.description as blog_description,
+        b.created_at as blog_created_at,
+        b.updated_at as blog_updated_at,
+        b.atIndex as blog_atIndex,
+        u.id as user_id,
+        u.USERNAME as user_username,
+        u.avatar as user_avatar
+        from blog b left outer join user u
+        on u.ID = b.USER_ID
+        <choose>
+            <when test="user_id != null">
+                WHERE user_id = #{user_id}
+            </when>
+            <otherwise>
+                WHERE b.atIndex = 1
+            </otherwise>
+        </choose>
+#         order by b.id desc
+        limit #{offset},#{limit}
+    </select>
+    <select id="countBlog" resultType="int">
+        select count(*)
+        from blog
+    </select>
+    <select id="selectBlogByBlogId" resultMap="detailedBlogResultMap">
+        select b.id as blog_id,
+        b.title as blog_title,
+        b.description as blog_description,
+        b.content as blog_content,
+        b.created_at as blog_created_at,
+        b.updated_at as blog_updated_at,
+        u.id as user_id,
+        u.username as user_username,
+        u.avatar as user_avatar
+        from blog b
+        left outer join user u
+        on b.USER_ID = u.ID
+        where b.ID = #{id}
+        <!--        <if test="atIndex == true">-->
+        <!--            AND b.atIndex = #{atIndex}-->
+        <!--        </if>-->
+    </select>
+    <insert id="insertBlog" parameterType="Blog" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert blog(user_id, title, description, content, atIndex, created_at, updated_at)
+        values (#{userId}, #{title}, #{description}, #{content}, #{atIndex}, now(), now())
+    </insert>
+    <update id="updateBlog" parameterType="Blog" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        update blog
+        set title       = #{title},
+            content     = #{content},
+            description = #{description},
+            atIndex     = #{atIndex},
+            updated_at  = now()
+        where ID = #{id}
+    </update>
+    <delete id="deleteBlog" parameterType="int">
+        delete
+        from blog
+        where ID = #{blogId}
+    </delete>
+
+    <!-- Very Complex Result Map -->
+    <resultMap id="detailedBlogResultMap" type="Blog">
+        <id property="id" column="blog_id"/>
+        <result property="title" column="blog_title"/>
+        <result property="description" column="blog_description"/>
+        <result property="createdAt" column="blog_created_at"/>
+        <result property="updatedAt" column="blog_updated_at"/>
+        <result property="content" column="blog_content"/>
+        <result property="atIndex" column="blog_atIndex"/>
+        <association property="user" javaType="User">
+            <id property="id" column="user_id"/>
+            <result property="username" column="user_username"/>
+            <result property="avatar" column="user_avatar"/>
+        </association>
+    </resultMap>
+</mapper>
